@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>你会怎么选？</title>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, "PingFang SC", "Helvetica Neue", sans-serif; background: #0a0a0a; color: #fff; min-height: 100vh; overflow-x: hidden; }
+
+.screen { display: none; min-height: 100vh; padding: 24px 20px; flex-direction: column; align-items: center; justify-content: center; }
+.screen.active { display: flex; }
+
+/* Dilemma */
+.dilemma-label { font-size: 12px; color: #888; letter-spacing: 4px; text-transform: uppercase; margin-bottom: 16px; }
+.dilemma-counter { font-size: 12px; color: #555; margin-bottom: 8px; }
+.dilemma-text { font-size: 22px; line-height: 1.6; text-align: center; margin-bottom: 40px; max-width: 320px; font-weight: 500; }
+.timer { font-size: 48px; font-weight: 200; color: #ff4444; margin-bottom: 32px; font-variant-numeric: tabular-nums; }
+.choices { width: 100%; max-width: 320px; display: flex; flex-direction: column; gap: 16px; }
+.choice-btn { background: transparent; border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 18px 24px; border-radius: 12px; font-size: 17px; cursor: pointer; transition: all 0.3s; text-align: center; -webkit-tap-highlight-color: transparent; }
+.choice-btn:active { background: rgba(255,255,255,0.15); border-color: #fff; transform: scale(0.97); }
+
+/* Reveal */
+.reveal-container { text-align: center; max-width: 340px; }
+.your-choice { font-size: 14px; color: #888; margin-bottom: 8px; }
+.reveal-stat { font-size: 56px; font-weight: 700; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 16px 0; }
+.reveal-desc { font-size: 16px; color: #bbb; line-height: 1.6; margin-bottom: 12px; }
+.expert-take { font-size: 14px; color: #999; font-style: italic; padding: 12px 16px; border-left: 2px solid #764ba2; margin: 20px 0 32px; text-align: left; line-height: 1.6; }
+.next-btn { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff; border: none; padding: 16px 48px; border-radius: 28px; font-size: 16px; cursor: pointer; }
+
+/* Result Card */
+.card-wrapper { width: 100%; max-width: 360px; }
+.result-card { border-radius: 20px; padding: 32px 24px; text-align: center; position: relative; overflow: hidden; }
+.result-card::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(255,255,255,0.06) 0%, transparent 60%); }
+.card-type-label { font-size: 11px; letter-spacing: 6px; color: rgba(255,255,255,0.6); margin-bottom: 20px; position: relative; }
+.card-rarity { font-size: 13px; color: rgba(255,255,255,0.7); margin-bottom: 12px; position: relative; font-weight: 500; }
+.card-type { font-size: 28px; font-weight: 700; margin-bottom: 8px; position: relative; }
+.card-color-dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; margin-right: 6px; vertical-align: middle; }
+.card-subtitle { font-size: 14px; color: rgba(255,255,255,0.5); margin-bottom: 20px; position: relative; }
+.card-desc { font-size: 15px; color: rgba(255,255,255,0.85); line-height: 1.8; position: relative; margin-bottom: 24px; text-align: left; }
+.card-color-label { font-size: 13px; position: relative; margin-bottom: 16px; }
+.card-footer { font-size: 12px; color: rgba(255,255,255,0.3); position: relative; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 16px; }
+.card-share-hook { font-size: 13px; color: rgba(255,255,255,0.5); margin-top: 8px; font-style: italic; position: relative; }
+
+.share-actions { margin-top: 24px; display: flex; flex-direction: column; gap: 12px; align-items: center; }
+.share-btn { color: #fff; border: none; padding: 14px 40px; border-radius: 28px; font-size: 15px; cursor: pointer; width: 100%; max-width: 280px; -webkit-tap-highlight-color: transparent; }
+.share-btn.primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+.share-btn.secondary { background: transparent; border: 1px solid rgba(255,255,255,0.2); }
+.restart-btn { background: none; border: none; color: #888; font-size: 13px; cursor: pointer; margin-top: 12px; text-decoration: underline; }
+
+@keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+.fade-up { animation: fadeUp 0.5s ease-out forwards; }
+.fade-up-delay { animation: fadeUp 0.5s ease-out 0.2s forwards; opacity: 0; }
+
+/* Toast */
+.toast { position: fixed; bottom: 60px; left: 50%; transform: translateX(-50%); background: rgba(255,255,255,0.15); backdrop-filter: blur(10px); color: #fff; padding: 12px 24px; border-radius: 20px; font-size: 14px; opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 100; }
+.toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+
+<div class="screen active" id="screen-dilemma">
+  <div class="dilemma-label fade-up">道德困境</div>
+  <div class="dilemma-counter fade-up" id="dilemma-counter"></div>
+  <div class="dilemma-text fade-up-delay" id="dilemma-text"></div>
+  <div class="timer fade-up-delay" id="timer">10</div>
+  <div class="choices fade-up-delay">
+    <button class="choice-btn" id="choice-a" onclick="choose('A')"></button>
+    <button class="choice-btn" id="choice-b" onclick="choose('B')"></button>
+  </div>
+</div>
+
+<div class="screen" id="screen-reveal">
+  <div class="reveal-container">
+    <div class="your-choice" id="your-choice"></div>
+    <div class="reveal-stat fade-up" id="reveal-stat"></div>
+    <div class="reveal-desc" id="reveal-desc"></div>
+    <div class="expert-take" id="expert-take"></div>
+    <button class="next-btn" onclick="showResult()">看看你是什么类型 →</button>
+  </div>
+</div>
+
+<div class="screen" id="screen-result">
+  <div class="card-wrapper">
+    <div class="result-card" id="result-card">
+      <div class="card-type-label">你的决策人格</div>
+      <div class="card-rarity" id="card-rarity"></div>
+      <div class="card-type" id="card-type"></div>
+      <div class="card-subtitle" id="card-subtitle"></div>
+      <div class="card-desc" id="card-desc"></div>
+      <div class="card-color-label" id="card-color-label"></div>
+      <div class="card-share-hook" id="card-share-hook"></div>
+      <div class="card-footer">你会怎么选？· 道德困境测试</div>
+    </div>
+    <div class="share-actions">
+      <button class="share-btn primary" onclick="saveCard()">📸 保存卡片到相册</button>
+      <button class="share-btn secondary" onclick="copyLink()">🔗 复制链接分享</button>
+      <button class="restart-btn" onclick="restart()">再测一次</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const dilemmas = [
+  {
+    id: "d01", text: "深夜，你发现最好的朋友在考试中作弊。举报意味着她会被开除，但不举报意味着你的诚信有裂缝。",
+    optionA: "举报她", optionB: "假装没看见",
+    revealFormats: {
+      A: { stat: "38%", desc: "的人和你一样选择了举报", expert: "心理学家说：选择举报的人通常有更强的规则意识，但这不代表冷漠——恰恰相反，他们相信规则能保护更多人。" },
+      B: { stat: "62%", desc: "的人和你一样选择了沉默", expert: "心理学家说：选择沉默的人往往更重视关系的不可替代性。在你的价值体系里，人比规则更重要。" }
+    },
+    resultA: { type: "秩序守护者", rarity: "你属于人群中仅有38%的「秩序守护者」", subtitle: "Justice First", desc: "你相信规则是社会的骨架。即使面对最亲近的人，你也能分清是非。这不是冷酷，而是一种更深层的温柔——你相信每个人都值得被公平对待。", color: "🎨 人格底色：钢蓝 — 理性、坚定、有原则的光芒", shareHook: "测测你是哪种决策人格？我居然是秩序守护者…", bg: "linear-gradient(145deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)" },
+    resultB: { type: "关系守望者", rarity: "你属于人群中仅有62%的「关系守望者」…等等，其实只有23%能毫不犹豫", subtitle: "Bonds First", desc: "你把人放在制度前面。在你眼里，一段真挚的友情比任何规章都珍贵。你是那种会为朋友两肋插刀的人——也许不完美，但绝对真诚。", color: "🎨 人格底色：暖橘 — 温暖、忠诚、有温度的守护色", shareHook: "测测你是哪种决策人格？没想到我是关系守望者", bg: "linear-gradient(145deg, #2e1a1a 0%, #3e2916 50%, #604a0f 100%)" }
+  },
+  {
+    id: "d02", text: "你意外获得了一个能力：可以看到每个人剩余的寿命。你最好的朋友头上显示只剩3个月。",
+    optionA: "告诉她", optionB: "独自承受这个秘密",
+    revealFormats: {
+      A: { stat: "44%", desc: "的人选择了坦诚相告", expert: "存在主义哲学认为：直面死亡的人才能真正活着。你选择把选择权还给她。" },
+      B: { stat: "56%", desc: "的人选择了独自承受", expert: "关怀伦理学认为：有时候保护一个人不受伤害，比说出真相更需要勇气。" }
+    },
+    resultA: { type: "真相信使", rarity: "你属于人群中仅有44%的「真相信使」", subtitle: "Truth Bearer", desc: "你相信人有权知道关于自己的一切。在你看来，隐瞒是一种对他人自主权的剥夺。你是那种会说出不舒服真相的人——因为你相信真相终究能带来力量。", color: "🎨 人格底色：晨曦金 — 明亮、直接、照见一切", shareHook: "测测你是哪种决策人格？我是真相信使型…", bg: "linear-gradient(145deg, #2e2a1a 0%, #3e3416 50%, #60520f 100%)" },
+    resultB: { type: "温柔守秘者", rarity: "你属于人群中仅有18%能真正做到沉默的「温柔守秘者」", subtitle: "Silent Guardian", desc: "你愿意把痛苦留给自己。在你的世界里，保护所爱的人不受伤害，比坚持原则更重要。你是人群中最温柔的存在——代价是你自己承受得更多。", color: "🎨 人格底色：深紫 — 沉默、深邃、有重量的温柔", shareHook: "测测你是哪种决策人格？没想到我是温柔守秘者…", bg: "linear-gradient(145deg, #1a1a2e 0%, #261640 50%, #3d0f60 100%)" }
+  },
+  {
+    id: "d03", text: "你的伴侣和你妈同时掉进水里。你只能救一个。",
+    optionA: "救伴侣", optionB: "救妈妈",
+    revealFormats: {
+      A: { stat: "31%", desc: "的人选择了救伴侣", expert: "进化心理学视角：选择伴侣可能反映了对未来的优先，但更可能你相信——爱是你主动选择的。" },
+      B: { stat: "69%", desc: "的人选择了救妈妈", expert: "中国文化中，'百善孝为先'根植于集体潜意识。选择妈妈不一定是不爱伴侣——而是有些债永远还不清。" }
+    },
+    resultA: { type: "自由灵魂", rarity: "你属于人群中仅有31%的「自由灵魂」", subtitle: "Free Spirit", desc: "你把自己主动选择的关系放在第一位。这不是不孝，而是你相信：最深的爱来自自由选择，而非血缘义务。你是一个相信爱需要勇气的人。", color: "🎨 人格底色：天青 — 自由、开阔、不被定义", shareHook: "测测你是哪种决策人格？我是自由灵魂型…", bg: "linear-gradient(145deg, #1a2e2e 0%, #163e3e 50%, #0f6060 100%)" },
+    resultB: { type: "根系守护者", rarity: "你属于人群中69%选择了妈妈，但只有14%承认这不需要犹豫", subtitle: "Root Keeper", desc: "你心中有一条看不见的线，连着来处。妈妈不只是一个人——她是你存在的源头。你是那种会在深夜突然想家的人，看似独立，实则心里永远留着一盏灯。", color: "🎨 人格底色：大地棕 — 厚重、踏实、有根的安全感", shareHook: "测测你是哪种决策人格？没想到我是根系守护者…", bg: "linear-gradient(145deg, #2e2419 0%, #3e3016 50%, #604a1a 100%)" }
+  },
+  {
+    id: "d04", text: "你最好的朋友的伴侣向你表白。你会告诉朋友真相，还是保守秘密保护友情？",
+    optionA: "告诉朋友真相", optionB: "保守秘密",
+    revealFormats: {
+      A: { stat: "12%", desc: "的人毫不犹豫选择了坦白", expert: "社会心理学研究表明：选择坦诚的人往往拥有更高的「情感安全感基线」。你不害怕冲突，因为你相信真正的关系能经受住真相的重量。" },
+      B: { stat: "15%", desc: "的人选择了沉默守护", expert: "关怀伦理学认为：你感知到了真相传递的「时机成本」。你不是在逃避，而是在用沉默为对方争取消化现实的缓冲空间。" }
+    },
+    resultA: { type: "清醒守护者", rarity: "你属于人群中仅有12%的「清醒守护者」", subtitle: "Lucid Guardian", desc: "你天生拥有一种罕见的勇气——在友情与真相之间，你永远选择让对方看见真实的世界，即使这意味着你要承受最先被误解的风险。", color: "🎨 人格底色：冰蓝 — 清澈、锋利、保护性的透明", shareHook: "测测你是哪种友情人格？我居然是12%的清醒守护者…", bg: "linear-gradient(145deg, #1a2a3e 0%, #163050 50%, #0f4060 100%)" },
+    resultB: { type: "温柔缓冲者", rarity: "你属于人群中仅有15%的「温柔缓冲者」", subtitle: "Gentle Buffer", desc: "你拥有一种极为稀有的能力——你能感知到真相传递的「时机成本」。你不是在逃避，而是在用沉默为对方争取消化现实的缓冲空间。你保护的不是秘密，是对方此刻的完整。", color: "🎨 人格底色：暖琥珀 — 包容、厚重、有温度的保护色", shareHook: "测测你是哪种友情人格？没想到我是15%的温柔缓冲者", bg: "linear-gradient(145deg, #2e2419 0%, #3e3016 50%, #604a1a 100%)" }
+  },
+  {
+    id: "d05", text: "你发现AI可以完美模拟你去世的亲人，语气、记忆、习惯都一模一样。你会和"他"聊天吗？",
+    optionA: "会，这是一种慰藉", optionB: "不会，这不是真的",
+    revealFormats: {
+      A: { stat: "57%", desc: "的人选择了拥抱虚拟的温暖", expert: "心理学家说：对虚拟陪伴的接受度与对失去的恐惧成正比。选择对话不是软弱，而是你仍然渴望连接。" },
+      B: { stat: "43%", desc: "的人拒绝了这份'温柔的谎言'", expert: "存在主义认为：接受失去本身就是爱的最高形式。你选择了带着伤口前行，而不是用幻觉止痛。" }
+    },
+    resultA: { type: "记忆编织者", rarity: "你属于人群中57%选择对话的人里，仅有9%会认真倾听到落泪", subtitle: "Memory Weaver", desc: "你相信爱不会因为载体的改变而消失。在你的世界里，一段对话的温度不取决于对方是不是「真的」——而取决于你投入的感情是不是真的。", color: "🎨 人格底色：月光银 — 柔和、梦幻、介于真实与虚幻之间", shareHook: "测测你是哪种记忆人格？我居然是记忆编织者…", bg: "linear-gradient(145deg, #1a1a2e 0%, #202040 50%, #2a2a60 100%)" },
+    resultB: { type: "清醒告别者", rarity: "你属于人群中仅有43%的「清醒告别者」", subtitle: "Lucid Farewell", desc: "你宁愿承受失去的痛苦，也不愿活在美丽的假象里。你知道：真正的纪念不是模拟他们的存在，而是带着他们给你的力量继续走下去。", color: "🎨 人格底色：岩石灰 — 坚韧、真实、不可动摇", shareHook: "测测你的记忆人格？没想到我是清醒告别者…", bg: "linear-gradient(145deg, #1e1e1e 0%, #2a2a2a 50%, #3a3a3a 100%)" }
+  },
+  {
+    id: "d06", text: "你可以选择：知道自己确切的死亡日期，或者永远不知道。",
+    optionA: "我要知道", optionB: "我不想知道",
+    revealFormats: {
+      A: { stat: "35%", desc: "的人选择了直面终点", expert: "斯多葛哲学：Memento Mori——记住你终将死去。知道终点的人往往更懂得珍惜过程。" },
+      B: { stat: "65%", desc: "的人选择了活在未知里", expert: "不确定性本身就是希望的另一个名字。你选择相信：不知道结局，才能认真活好每一天。" }
+    },
+    resultA: { type: "向死而生者", rarity: "你属于人群中仅有35%的「向死而生者」", subtitle: "Memento Mori", desc: "你是那种会直视深渊的人。知道终点不是为了恐惧，而是为了让剩下的每一天都不再浪费。你活得比大多数人都清醒。", color: "🎨 人格底色：黑曜石 — 深沉、清醒、向死而生的力量", shareHook: "测测你是哪种生死观？我居然是向死而生者…", bg: "linear-gradient(145deg, #0a0a0a 0%, #1a1a1a 50%, #2a1a2a 100%)" },
+    resultB: { type: "此刻拥有者", rarity: "你属于人群中65%不想知道的人里，仅有20%是因为真正热爱当下", subtitle: "Present Keeper", desc: "你天生懂得一个道理：活在当下不是因为不在乎未来，而是因为你知道——每一个此刻都是唯一的。你是人群中最会享受生活的那种人。", color: "🎨 人格底色：日出橙 — 温暖、当下、每一刻都在发光", shareHook: "测测你的生死观人格？没想到我是此刻拥有者", bg: "linear-gradient(145deg, #2e1a0a 0%, #3e2a10 50%, #604010 100%)" }
+  },
+  {
+    id: "d07", text: "一个陌生人愿意给你一千万，条件是你余生再也不能联系家人。",
+    optionA: "接受", optionB: "拒绝",
+    revealFormats: {
+      A: { stat: "11%", desc: "的人选择了接受", expert: "行为经济学发现：选择金钱的人通常不是贪婪，而是对当前处境有更强的改变渴望。金钱代表的是可能性，不是物质。" },
+      B: { stat: "89%", desc: "的人选择了拒绝", expert: "依恋理论认为：安全的家庭联结是人类最基本的心理需求。你拒绝的不是钱，而是在捍卫你最深的安全感来源。" }
+    },
+    resultA: { type: "孤勇破局者", rarity: "你属于人群中仅有11%的「孤勇破局者」", subtitle: "Lone Breaker", desc: "你敢于为了改变命运付出极端代价。这不是冷血——你可能比任何人都爱家人，但你更相信：用一千万改变的人生，终究能找到重逢的方式。", color: "🎨 人格底色：烈焰红 — 决绝、勇猛、燃烧一切换取新生", shareHook: "测测你的价值观人格？我居然是11%的孤勇破局者…", bg: "linear-gradient(145deg, #2e0a0a 0%, #401010 50%, #601a1a 100%)" },
+    resultB: { type: "根脉守护者", rarity: "你属于89%拒绝的人中，最坚定的那一批", subtitle: "Bloodline Guardian", desc: "一千万在你眼里不值一顿家常饭。你清楚地知道：世界上最贵的东西从来不标价。家人不是你的退路——他们就是你的全部路。", color: "🎨 人格底色：琥珀金 — 温暖、厚重、永远不褪色", shareHook: "测测你的价值观人格？没想到我连一千万都不要…", bg: "linear-gradient(145deg, #2e2a19 0%, #3e3516 50%, #605020 100%)" }
+  },
+  {
+    id: "d08", text: "你发现你的记忆有30%是被植入的假记忆。你可以选择知道哪些是假的，但代价是那些温暖的记忆可能全部崩塌。",
+    optionA: "我要知道真相", optionB: "让假记忆留着吧",
+    revealFormats: {
+      A: { stat: "41%", desc: "的人选择了拆穿幻觉", expert: "认知心理学：选择真相的人对「自我一致性」有极高需求。你宁愿痛苦但真实，也不要虚假的幸福。" },
+      B: { stat: "59%", desc: "的人选择了保留温暖", expert: "叙事心理学认为：记忆的意义不在于真假，而在于它如何塑造了今天的你。你选择了接受自己的故事。" }
+    },
+    resultA: { type: "真相猎人", rarity: "你属于人群中仅有41%的「真相猎人」", subtitle: "Truth Hunter", desc: "你宁愿住在废墟上重建，也不要住在空中楼阁里。你对真实有近乎偏执的追求——因为你知道，只有站在真相上，才能走得更远。", color: "🎨 人格底色：琉璃青 — 通透、锋利、容不下一粒沙", shareHook: "测测你的记忆人格？我居然是真相猎人…", bg: "linear-gradient(145deg, #0a1a2e 0%, #102040 50%, #1a3060 100%)" },
+    resultB: { type: "故事守护者", rarity: "你属于人群中仅有59%的「故事守护者」，但只有16%真正理解为什么", subtitle: "Story Keeper", desc: "你明白一个深刻的道理：人不是活在事实里，而是活在叙事里。那些记忆，不管真假，都已经成为你的一部分。你是最懂「接受」的人。", color: "🎨 人格底色：暮光紫 — 包容、深邃、模糊了真假的边界", shareHook: "测测你的记忆人格？没想到我是故事守护者", bg: "linear-gradient(145deg, #1a1a2e 0%, #251640 50%, #3a1a60 100%)" }
+  },
+  {
+    id: "d09", text: "你的孩子天赋极高，但被确诊自闭症。有一种药可以「治愈」自闭症，但同时会抹去天赋。",
+    optionA: "给孩子吃药", optionB: "保留天赋和自闭症",
+    revealFormats: {
+      A: { stat: "52%", desc: "的人选择了治愈", expert: "父母的保护本能是人类最强的驱动力之一。你选择让孩子拥有「正常」的社交能力——因为你知道这个世界对不同的人并不温柔。" },
+      B: { stat: "48%", desc: "的人选择了保留完整的孩子", expert: "神经多样性运动认为：自闭症不是缺陷，是不同的存在方式。你选择了接受孩子的全部——包括世界还没学会理解的部分。" }
+    },
+    resultA: { type: "守护者父母", rarity: "你属于52%选择治愈的人中，真正为此挣扎过的那一批", subtitle: "Shield Parent", desc: "你愿意为孩子挡住这个世界所有的锋利。你的选择不是否定天赋——而是你太清楚，在一个不够包容的世界里，融入有时候比出众更重要。", color: "🎨 人格底色：盾牌银 — 坚固、保护、永远挡在前面", shareHook: "测测你的养育人格？我是守护者父母型…", bg: "linear-gradient(145deg, #1e1e2e 0%, #252540 50%, #353560 100%)" },
+    resultB: { type: "完整主义者", rarity: "你属于人群中仅有48%的「完整主义者」", subtitle: "Wholeness Keeper", desc: "你相信每个人来到世界上都是完整的。自闭症和天赋不是可以分开的零件——它们是同一个灵魂的不同面。你选择了最难的路：接受全部。", color: "🎨 人格底色：彩虹棱镜 — 多元、完整、折射出所有可能", shareHook: "测测你的养育人格？没想到我是完整主义者…", bg: "linear-gradient(145deg, #1a2e1a 0%, #163e20 50%, #0f6030 100%)" }
+  },
+  {
+    id: "d10", text: "你可以选择一种超能力：读心术或隐身术。但一旦选择，永远无法改变。",
+    optionA: "读心术", optionB: "隐身术",
+    revealFormats: {
+      A: { stat: "39%", desc: "的人选择了读心术", expert: "心理学发现：渴望读心的人通常在关系中经历过「被误解」的创伤。你想要的不是窥探——而是真正理解另一个人。" },
+      B: { stat: "61%", desc: "的人选择了隐身术", expert: "社会心理学：选择隐身反映了对「不被评判」的深层渴望。你想要的不是消失——而是一个可以完全做自己的空间。" }
+    },
+    resultA: { type: "灵魂读者", rarity: "你属于人群中仅有39%的「灵魂读者」", subtitle: "Soul Reader", desc: "你宁愿承担知道一切的代价，也不愿活在猜测里。你渴望的不是权力，而是真正的连接——那种不需要语言就能理解彼此的深度关系。", color: "🎨 人格底色：星云蓝 — 深邃、共情、能看见别人看不见的", shareHook: "测测你的超能力人格？我居然是灵魂读者…", bg: "linear-gradient(145deg, #0a1a3e 0%, #102550 50%, #1a3570 100%)" },
+    resultB: { type: "自由隐者", rarity: "你属于人群中仅有61%选择隐身的人里，最纯粹的那一类", subtitle: "Invisible Free", desc: "你不是要逃避世界——你是需要一个不被打扰的角落来做真正的自己。在你的理想世界里，每个人都有一个随时可以消失的按钮——不是为了躲避，而是为了呼吸。", color: "🎨 人格底色：雾灰 — 自由、轻盈、来去不留痕迹", shareHook: "测测你的超能力人格？没想到我选了隐身术", bg: "linear-gradient(145deg, #1a1a1a 0%, #252525 50%, #353535 100%)" }
+  },
+  {
+    id: "d11", text: "时光倒流到高考前一天。你可以选择重新考一次，但你现在所有的人际关系都会重置为零。",
+    optionA: "重考，改写命运", optionB: "不重考，保留现在的一切",
+    revealFormats: {
+      A: { stat: "33%", desc: "的人选择了重来", expert: "决策心理学：选择重来的人对「错过的自我」有未完成的执念。你相信人生可以被优化——而你愿意付出代价。" },
+      B: { stat: "67%", desc: "的人选择了留在现在", expert: "叙事心理学认为：接受过去是心理成熟的标志。你不是不遗憾——而是你知道，遗憾本身就是你故事的一部分。" }
+    },
+    resultA: { type: "时间重塑者", rarity: "你属于人群中仅有33%的「时间重塑者」", subtitle: "Time Reshaper", desc: "你心里住着一个不甘心的少年。你相信命运可以被改写，关系可以被重建——但错过的高考分数，永远不能。你不是贪心，你只是不甘平庸。", color: "🎨 人格底色：时空金 — 决绝、野心、敢把时间掰弯", shareHook: "测测你的时间人格？我居然愿意重考高考…", bg: "linear-gradient(145deg, #2e2a0a 0%, #403510 50%, #60501a 100%)" },
+    resultB: { type: "当下珍藏者", rarity: "你属于67%不重考的人中，真正因为珍惜而非恐惧的那一批", subtitle: "Present Treasure", desc: "你算过一笔账：分数可以重考，但身边这些人不能重遇。你选择的不是现状——而是你这一路上遇到的每一个人。你是最懂「缘分」的人。", color: "🎨 人格底色：暖阳黄 — 珍惜、感恩、照亮身边人", shareHook: "测测你的时间人格？没想到我一秒都不愿意重来", bg: "linear-gradient(145deg, #2e2a19 0%, #403520 50%, #605030 100%)" }
+  }
+];
+
+let currentDilemma = null, userChoice = null, timerInterval = null, timeLeft = 10;
+
+function init() {
+  const p = new URLSearchParams(location.search);
+  const dIdx = parseInt(p.get('d')) || Math.floor(Math.random() * dilemmas.length);
+  currentDilemma = dilemmas[dIdx % dilemmas.length];
+  render();
+  startTimer();
+  track('view', currentDilemma.id);
+}
+
+function render() {
+  document.getElementById('dilemma-text').textContent = currentDilemma.text;
+  document.getElementById('choice-a').textContent = currentDilemma.optionA;
+  document.getElementById('choice-b').textContent = currentDilemma.optionB;
+  document.getElementById('dilemma-counter').textContent = `第 ${dilemmas.indexOf(currentDilemma)+1}/${dilemmas.length} 题`;
+}
+
+function startTimer() {
+  timeLeft = 10;
+  const el = document.getElementById('timer');
+  el.textContent = '10'; el.style.color = '#ff4444';
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    el.textContent = timeLeft;
+    if (timeLeft <= 3) el.style.color = '#ff0000';
+    if (timeLeft <= 0) { clearInterval(timerInterval); choose(Math.random()>0.5?'A':'B', true); }
+  }, 1000);
+}
+
+function choose(opt, timeout=false) {
+  if (userChoice) return;
+  userChoice = opt;
+  clearInterval(timerInterval);
+  const r = currentDilemma.revealFormats[opt];
+  document.getElementById('your-choice').textContent = timeout ? '⏰ 时间到！系统帮你选了' : `你选择了「${opt==='A'?currentDilemma.optionA:currentDilemma.optionB}」`;
+  document.getElementById('reveal-stat').textContent = r.stat;
+  document.getElementById('reveal-desc').textContent = r.desc;
+  document.getElementById('expert-take').textContent = r.expert;
+  switchScreen('screen-reveal');
+  track('choose', currentDilemma.id, {opt, timeout, timeLeft});
+}
+
+function showResult() {
+  const r = userChoice==='A' ? currentDilemma.resultA : currentDilemma.resultB;
+  document.getElementById('result-card').style.background = r.bg;
+  document.getElementById('card-rarity').textContent = r.rarity;
+  document.getElementById('card-type').textContent = '「' + r.type + '」';
+  document.getElementById('card-subtitle').textContent = r.subtitle;
+  document.getElementById('card-desc').textContent = r.desc;
+  document.getElementById('card-color-label').textContent = r.color;
+  document.getElementById('card-share-hook').textContent = r.shareHook;
+  switchScreen('screen-result');
+  track('result_view', currentDilemma.id, {type: r.type});
+}
+
+function switchScreen(id) {
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function saveCard() {
+  const card = document.getElementById('result-card');
+  if (typeof html2canvas !== 'undefined') {
+    html2canvas(card, {backgroundColor: null, scale: 2}).then(canvas => {
+      const link = document.createElement('a');
+      link.download = '我的决策人格.png';
+      link.href = canvas.toDataURL();
+      link.click();
+      toast('卡片已保存 📸');
+    }).catch(() => toast('长按卡片区域即可保存'));
+  } else {
+    toast('长按卡片区域即可保存图片到相册 📸');
+  }
+  track('share_save', currentDilemma.id);
+}
+
+function copyLink() {
+  const url = location.origin + location.pathname + '?d=' + dilemmas.indexOf(currentDilemma);
+  const r = userChoice==='A' ? currentDilemma.resultA : currentDilemma.resultB;
+  const text = r.shareHook + '\n' + url;
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(()=>toast('链接已复制！去分享给朋友吧 ✨'));
+  } else {
+    prompt('复制分享：', text);
+  }
+  track('share_copy', currentDilemma.id);
+}
+
+function restart() {
+  userChoice = null;
+  currentDilemma = dilemmas[Math.floor(Math.random() * dilemmas.length)];
+  render();
+  switchScreen('screen-dilemma');
+  startTimer();
+  track('restart', currentDilemma.id);
+}
+
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2000);
+}
+
+function track(action, did, extra={}) {
+  const e = {t:Date.now(), a:action, d:did, ...extra, ua:navigator.userAgent.slice(0,80)};
+  const log = JSON.parse(localStorage.getItem('_events')||'[]');
+  log.push(e); localStorage.setItem('_events', JSON.stringify(log));
+  if (window._analyticsEndpoint) navigator.sendBeacon(window._analyticsEndpoint, JSON.stringify(e));
+}
+
+init();
+</script>
+</body>
+</html>
