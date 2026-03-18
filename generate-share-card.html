@@ -1,0 +1,15 @@
+<!DOCTYPE html><html><body>
+<canvas id="c" width="600" height="315"></canvas>
+<script>
+const c=document.getElementById('c'),x=c.getContext('2d');
+// Dark gradient bg
+const g=x.createLinearGradient(0,0,600,315);
+g.addColorStop(0,'#0a0a0a');g.addColorStop(0.5,'#1a1a2e');g.addColorStop(1,'#0f3460');
+x.fillStyle=g;x.fillRect(0,0,600,315);
+x.fillStyle='#fff';x.font='bold 36px sans-serif';x.textAlign='center';
+x.fillText('你会怎么选？',300,130);
+x.font='18px sans-serif';x.fillStyle='#aaa';
+x.fillText('22道灵魂拷问 · 测出你的真实人格',300,175);
+x.fillText('🎭',300,230);
+</script>
+</body></html>

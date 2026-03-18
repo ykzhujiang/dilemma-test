@@ -3,7 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>你会怎么选？</title>
+<title>你会怎么选？· 道德困境测试</title>
+<meta property="og:title" content="你会怎么选？· 道德困境测试">
+<meta property="og:description" content="22道灵魂拷问，测出你的真实人格。你敢试吗？">
+<meta property="og:image" content="https://ykzhujiang.github.io/dilemma-test/share-card.png">
+<meta property="og:url" content="https://ykzhujiang.github.io/dilemma-test/">
+<meta property="og:type" content="website">
+<meta name="description" content="22道灵魂拷问，测出你的真实人格。你敢试吗？">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎭</text></svg>">
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -214,6 +221,116 @@ const dilemmas = [
     },
     resultA: { type: "时间重塑者", rarity: "你属于人群中仅有33%的「时间重塑者」", subtitle: "Time Reshaper", desc: "你心里住着一个不甘心的少年。你相信命运可以被改写，关系可以被重建——但错过的高考分数，永远不能。你不是贪心，你只是不甘平庸。", color: "🎨 人格底色：时空金 — 决绝、野心、敢把时间掰弯", shareHook: "测测你的时间人格？我居然愿意重考高考…", bg: "linear-gradient(145deg, #2e2a0a 0%, #403510 50%, #60501a 100%)" },
     resultB: { type: "当下珍藏者", rarity: "你属于67%不重考的人中，真正因为珍惜而非恐惧的那一批", subtitle: "Present Treasure", desc: "你算过一笔账：分数可以重考，但身边这些人不能重遇。你选择的不是现状——而是你这一路上遇到的每一个人。你是最懂「缘分」的人。", color: "🎨 人格底色：暖阳黄 — 珍惜、感恩、照亮身边人", shareHook: "测测你的时间人格？没想到我一秒都不愿意重来", bg: "linear-gradient(145deg, #2e2a19 0%, #403520 50%, #605030 100%)" }
+  },
+  {
+    id: "d12", text: "你发现最好的朋友在背后说你坏话，但TA正在经历人生低谷。",
+    optionA: "当面对质", optionB: "假装不知道",
+    revealFormats: {
+      A: { stat: "42%", desc: "的人选择了当面对质", expert: "冲突心理学：选择对质的人相信「说开了才能解决」。你不怕冲突，因为你认为真正的友谊经得起真话。" },
+      B: { stat: "58%", desc: "的人选择了假装不知道", expert: "情境伦理学：你在权衡对方的处境。在你看来，人在低谷时说的话不代表真心——你选择给TA一个体面的机会。" }
+    },
+    resultA: { type: "直面者", rarity: "你属于人群中仅有42%的「直面者」", subtitle: "Confronter", desc: "你相信真正的友谊不怕真话。你宁愿吵一架也不愿意让隔阂在沉默中发酵。你是那种会把问题摆在桌面上的人——因为你觉得，遮遮掩掩才是对关系最大的不尊重。", color: "🎨 人格底色：烈火红 — 直接、坦荡、不藏一点弯弯绕绕", shareHook: "测测你是哪种友谊人格？我居然是直面者…", bg: "linear-gradient(145deg, #2e0a0a 0%, #401515 50%, #602020 100%)" },
+    resultB: { type: "沉默守护者", rarity: "你属于人群中仅有58%的「沉默守护者」，但只有21%是真的不在意", subtitle: "Silent Shield", desc: "你不是不介意，你是太懂人在低谷时有多脆弱。你选择了最难的那种善良——明明受了伤，还在替对方着想。你是人群中最有弹性的灵魂。", color: "🎨 人格底色：深海蓝 — 包容、深沉、能吞下所有委屈", shareHook: "测测你的友谊人格？没想到我是沉默守护者", bg: "linear-gradient(145deg, #0a1a2e 0%, #102540 50%, #1a3560 100%)" }
+  },
+  {
+    id: "d13", text: "公司要裁员，你可以选择保住自己，或者保住能力不如你但有家庭负担的同事。",
+    optionA: "保住自己", optionB: "保住同事",
+    revealFormats: {
+      A: { stat: "61%", desc: "的人选择了保住自己", expert: "进化心理学：自我保护是最基本的生存本能。选择自己不是自私——在飞机上你也要先给自己戴好氧气面罩。" },
+      B: { stat: "39%", desc: "的人选择了保住同事", expert: "利他主义研究发现：选择牺牲的人通常对自己的能力有更强的信心。你相信自己能重新站起来——但对方可能不行。" }
+    },
+    resultA: { type: "理性生存者", rarity: "你属于人群中61%选择自保的人中，能坦然承认的那一批", subtitle: "Rational Survivor", desc: "你不是不善良，你是够清醒。你知道在一个残酷的系统里，先保全自己才有能力帮助更多人。你是那种会在暴风雨里先找到锚点的人。", color: "🎨 人格底色：钛灰 — 冷静、理性、钢铁般的自知", shareHook: "测测你的职场人格？我居然是理性生存者…", bg: "linear-gradient(145deg, #1a1a1e 0%, #252530 50%, #353545 100%)" },
+    resultB: { type: "托底者", rarity: "你属于人群中仅有39%的「托底者」", subtitle: "Safety Net", desc: "你愿意把安全感让给别人。这不是圣母心——你是算过一笔更大的账：你年轻、有能力、没有拖累，而对方的家庭可能因为这个决定崩塌。你是最敢赌自己的人。", color: "🎨 人格底色：暖陶红 — 温厚、担当、用自己的背去扛别人的天", shareHook: "测测你的职场人格？没想到我愿意让出机会…", bg: "linear-gradient(145deg, #2e1a19 0%, #402520 50%, #603530 100%)" }
+  },
+  {
+    id: "d14", text: "父母安排的相亲对象条件完美但你没感觉，或者继续等那个不确定的真爱。",
+    optionA: "接受相亲对象", optionB: "继续等真爱",
+    revealFormats: {
+      A: { stat: "34%", desc: "的人选择了接受", expert: "婚姻心理学：「先结婚后恋爱」在很多文化中被验证有效。你相信感情可以培养——条件只是起跑线。" },
+      B: { stat: "66%", desc: "的人选择了等待", expert: "依恋理论：选择等待的人对「心动感」有更高的阈值。你不愿意将就——因为你知道没有心动的婚姻最终会变成另一种孤独。" }
+    },
+    resultA: { type: "务实主义者", rarity: "你属于人群中仅有34%的「务实主义者」", subtitle: "Pragmatic Heart", desc: "你不是不相信爱情，你是比大多数人更理解：爱情是一个动词，不是一个形容词。你相信两个条件匹配的人，可以用时间酿出比心动更醇厚的东西。", color: "🎨 人格底色：暖木棕 — 稳重、踏实、慢慢升温", shareHook: "测测你的爱情人格？我居然是务实主义者…", bg: "linear-gradient(145deg, #2e2419 0%, #3e3020 50%, #504030 100%)" },
+    resultB: { type: "心动原教旨主义者", rarity: "你属于66%等待的人里，最不愿意妥协的那一类", subtitle: "Spark Purist", desc: "你宁愿一个人也不要将就。在你看来，没有心动的感情就像没有盐的菜——看起来完整，但吃起来索然无味。你是那种宁缺毋滥到底的人。", color: "🎨 人格底色：玫瑰金 — 浪漫、坚持、绝不打折的爱", shareHook: "测测你的爱情人格？没想到我是心动原教旨主义者", bg: "linear-gradient(145deg, #2e1a20 0%, #402530 50%, #603040 100%)" }
+  },
+  {
+    id: "d15", text: "你捡到一个钱包，里面有5万现金和失主信息。但失主永远不会知道钱包里到底有多少钱。",
+    optionA: "全部归还", optionB: "留下一部分",
+    revealFormats: {
+      A: { stat: "78%", desc: "的人说自己会全部归还", expert: "行为经济学发现：匿名场景下的道德选择最能反映真实人格。你选择了在没人看见的地方做对的事——这是最稀有的品质。" },
+      B: { stat: "22%", desc: "的人承认会留下一部分", expert: "道德心理学：承认欲望本身需要极大的诚实。你没有假装完美——而这种坦诚比很多人的「全额归还」更真实。" }
+    },
+    resultA: { type: "暗处君子", rarity: "你属于78%说全额归还的人中，真正不会动心的那一小部分", subtitle: "Dark Room Noble", desc: "你的道德感不需要观众。在没人看见的角落里，你依然是你自己。你相信：做对的事不是因为有人在看，而是因为你自己在看。", color: "🎨 人格底色：月白 — 清洁、自持、暗处也发光", shareHook: "测测你是哪种道德人格？我居然是暗处君子…", bg: "linear-gradient(145deg, #1a1a2e 0%, #202838 50%, #283848 100%)" },
+    resultB: { type: "坦诚人", rarity: "你属于人群中仅有22%敢承认的「坦诚人」", subtitle: "Honest Flawed", desc: "你选择了最需要勇气的选项——承认自己不完美。大多数人会撒谎选A，但你没有。你的真实比别人的假装高尚要珍贵一万倍。", color: "🎨 人格底色：铜绿 — 粗粝、真实、带着锈迹的诚实", shareHook: "测测你的道德人格？没想到我这么诚实…", bg: "linear-gradient(145deg, #1a2e1e 0%, #204028 50%, #305038 100%)" }
+  },
+  {
+    id: "d16", text: "伴侣翻你手机发现你和前任的聊天记录——内容完全是纯友谊。",
+    optionA: "主动坦白所有聊天", optionB: "删除记录避免误会",
+    revealFormats: {
+      A: { stat: "47%", desc: "的人选择了坦白", expert: "亲密关系研究：选择坦白的人对关系的安全感更高。你相信伴侣能理解——因为你认为信任是双向的。" },
+      B: { stat: "53%", desc: "的人选择了删除", expert: "情绪管理学：你不是在说谎，你是在管理冲突的时机。你知道在对方情绪化的时候，真相往往只会火上浇油。" }
+    },
+    resultA: { type: "透明人", rarity: "你属于人群中仅有47%的「透明人」", subtitle: "Glass Heart", desc: "你的关系哲学只有一个字：真。你不怕被看穿，因为你本来就没什么要藏的。你相信：一段需要小心翼翼隐藏的关系，本身就有问题。", color: "🎨 人格底色：水晶白 — 透明、坦荡、不需要伪装", shareHook: "测测你的亲密关系人格？我居然是透明人…", bg: "linear-gradient(145deg, #1e1e2e 0%, #282838 50%, #383848 100%)" },
+    resultB: { type: "关系工程师", rarity: "你属于人群中仅有53%的「关系工程师」，但只有19%是出于保护而非心虚", subtitle: "Relationship Engineer", desc: "你不是在欺骗，你是在管理。你深知：亲密关系是世界上最复杂的系统，而你选择了用策略代替蛮力。你保护的不是秘密——是伴侣此刻的安全感。", color: "🎨 人格底色：雾灰蓝 — 精密、体贴、每一步都算过", shareHook: "测测你的亲密关系人格？没想到我是关系工程师", bg: "linear-gradient(145deg, #1a1e2e 0%, #202838 50%, #283548 100%)" }
+  },
+  {
+    id: "d17", text: "创业伙伴想用灰色手段拿下大客户，成功率90%。拒绝可能失去合伙人。",
+    optionA: "支持", optionB: "拒绝",
+    revealFormats: {
+      A: { stat: "28%", desc: "的人选择了支持", expert: "博弈论：你做了一个风险收益计算。90%成功率意味着收益远大于成本——至少在短期内。你是实用主义者。" },
+      B: { stat: "72%", desc: "的人选择了拒绝", expert: "长期博弈理论：你在玩无限游戏。灰色手段赢了这一局，但可能输掉整个棋盘。你赌的是更长的赛道。" }
+    },
+    resultA: { type: "灰色实用者", rarity: "你属于人群中仅有28%敢承认的「灰色实用者」", subtitle: "Gray Pragmatist", desc: "你不活在道德教科书里。你知道真实的商业世界不是非黑即白——而灰色地带正是大多数成功者起步的地方。你是最不自欺欺人的创业者。", color: "🎨 人格底色：烟灰 — 务实、灵活、在灰色中找到出路", shareHook: "测测你的商业人格？我居然是灰色实用者…", bg: "linear-gradient(145deg, #1e1e1e 0%, #2a2a2a 50%, #3a3a3a 100%)" },
+    resultB: { type: "底线守护者", rarity: "你属于72%拒绝的人里，真正愿意承受后果的那一批", subtitle: "Line Holder", desc: "你心里有一条线，任何利益都买不动。你知道拒绝可能代价很大——但你更知道，底线一旦退让，就再也找不回来了。你是最贵的那种合伙人。", color: "🎨 人格底色：墨黑金边 — 坚硬、不可动摇、自带价格标签", shareHook: "测测你的商业人格？没想到我宁愿失去合伙人", bg: "linear-gradient(145deg, #0a0a0a 0%, #1a1a10 50%, #2a2a1a 100%)" }
+  },
+  {
+    id: "d18", text: "你的孩子在学校被欺负，但老师说'小孩子打打闹闹很正常'。",
+    optionA: "教孩子反击", optionB: "通过正规渠道投诉",
+    revealFormats: {
+      A: { stat: "55%", desc: "的人选择了教孩子反击", expert: "儿童心理学：教反击不等于教暴力。你在教孩子一件更重要的事——你有权利保护自己，不需要等别人来救你。" },
+      B: { stat: "45%", desc: "的人选择了投诉", expert: "系统思维：你相信制度的力量。你不是在教孩子忍让——而是在教TA用更聪明的方式解决问题。" }
+    },
+    resultA: { type: "丛林教育者", rarity: "你属于人群中55%的「丛林教育者」，但只有23%会亲自示范", subtitle: "Jungle Teacher", desc: "你清楚这个世界不会永远温柔。你选择了最原始但最有效的教育——让孩子知道，被欺负的时候，你不需要等任何人的许可来保护自己。", color: "🎨 人格底色：狼灰 — 野性、保护、教会孩子咬回去", shareHook: "测测你的教育人格？我居然是丛林教育者…", bg: "linear-gradient(145deg, #1e1e1e 0%, #2a2828 50%, #3a3535 100%)" },
+    resultB: { type: "制度信仰者", rarity: "你属于人群中仅有45%的「制度信仰者」", subtitle: "System Believer", desc: "你教孩子的不只是解决这一个问题——而是一种世界观：遇到不公正的事，用规则去改变它。你是那种会把学校告到教育局的父母——不是为了报复，而是因为你相信制度应该管用。", color: "🎨 人格底色：正蓝 — 秩序、正义、用规则改变世界", shareHook: "测测你的教育人格？没想到我是制度信仰者", bg: "linear-gradient(145deg, #0a0a2e 0%, #101540 50%, #1a2060 100%)" }
+  },
+  {
+    id: "d19", text: "同事把你的方案当自己的汇报给了领导。你有证据。",
+    optionA: "当场揭穿", optionB: "私下沟通",
+    revealFormats: {
+      A: { stat: "36%", desc: "的人选择了当场揭穿", expert: "组织行为学：公开揭穿是最强的震慑信号。你在告诉所有人：我不是好欺负的。代价是高风险，但收益是永久威慑。" },
+      B: { stat: "64%", desc: "的人选择了私下沟通", expert: "职场心理学：你在玩一盘更大的棋。私下沟通既保住了你的证据，又给了对方「主动纠正」的空间——如果TA不改，你的筹码反而更大。" }
+    },
+    resultA: { type: "闪电维权者", rarity: "你属于人群中仅有36%的「闪电维权者」", subtitle: "Lightning Justice", desc: "你不给窃取者第二次机会。你相信：在职场里，沉默就是纵容。你的当场揭穿不是冲动——而是一种策略：让所有人都看到，偷别人的东西有代价。", color: "🎨 人格底色：闪电金 — 迅猛、果断、一击即中", shareHook: "测测你的职场人格？我居然是闪电维权者…", bg: "linear-gradient(145deg, #2e2a0a 0%, #403510 50%, #60501a 100%)" },
+    resultB: { type: "暗棋大师", rarity: "你属于64%私下沟通的人里，最有策略的那一类", subtitle: "Shadow Strategist", desc: "你不是在忍，你是在蓄力。你知道当场揭穿只能赢一次，但掌握节奏可以赢更久。你是职场里最不能得罪的人——因为你手里永远有牌。", color: "🎨 人格底色：暗紫 — 深藏、精算、每一步都有后手", shareHook: "测测你的职场人格？没想到我是暗棋大师", bg: "linear-gradient(145deg, #1a1a2e 0%, #201840 50%, #2a1a50 100%)" }
+  },
+  {
+    id: "d20", text: "老家亲戚借10万说急用。你知道TA有赌博历史。",
+    optionA: "借", optionB: "不借",
+    revealFormats: {
+      A: { stat: "18%", desc: "的人选择了借", expert: "家族心理学：选择借的人通常背负着更重的家族责任感。你不是不知道风险——你是无法承受「万一是真的急用而我没帮」的愧疚。" },
+      B: { stat: "82%", desc: "的人选择了不借", expert: "边界心理学：你学会了一件最难的事——对亲人说不。你知道真正的帮助不是给钱，而是不让自己成为TA赌瘾的ATM。" }
+    },
+    resultA: { type: "血缘软心人", rarity: "你属于人群中仅有18%的「血缘软心人」", subtitle: "Bloodline Softie", desc: "你心里有一个声音一直在说：万一呢？万一这次是真的呢？你不是天真——你是太害怕后悔。在你的价值观里，宁可被骗也不愿意见死不救。", color: "🎨 人格底色：暖红 — 柔软、不忍、心太大装不下拒绝", shareHook: "测测你是哪种亲情人格？我居然还是会借…", bg: "linear-gradient(145deg, #2e1a1a 0%, #402020 50%, #602a2a 100%)" },
+    resultB: { type: "边界建筑师", rarity: "你属于82%不借的人里，不会因此内疚的那一批", subtitle: "Boundary Builder", desc: "你学会了人生最贵的一课：爱一个人不等于满足TA所有的要求。你拒绝的不是亲情——而是用金钱喂养一个会吞噬所有人的黑洞。你是全家最清醒的人。", color: "🎨 人格底色：铁灰 — 坚定、清醒、用拒绝来保护所有人", shareHook: "测测你的亲情人格？没想到我这么铁石心肠…才怪", bg: "linear-gradient(145deg, #1a1a1e 0%, #252528 50%, #353538 100%)" }
+  },
+  {
+    id: "d21", text: "你目睹路人被偷，但小偷看起来很危险。",
+    optionA: "出手干预", optionB: "报警等待",
+    revealFormats: {
+      A: { stat: "29%", desc: "的人选择了出手", expert: "英雄主义心理学：选择干预的人通常有更强的「道德身份感」。你不只是看见了不公——你觉得自己有义务行动。" },
+      B: { stat: "71%", desc: "的人选择了报警", expert: "风险评估学：你不是懦弱，你是理性。你知道在一个有公共安全系统的社会里，专业的事应该交给专业的人。" }
+    },
+    resultA: { type: "街头侠客", rarity: "你属于人群中仅有29%的「街头侠客」", subtitle: "Street Knight", desc: "你的正义感不需要制服和徽章。当你看到不公正发生，你的身体会比大脑先行动。你是人群中最有行动力的人——有时候鲁莽，但永远不袖手旁观。", color: "🎨 人格底色：赤铜 — 热血、行动、想都不想就冲了", shareHook: "测测你的正义感人格？我居然是街头侠客…", bg: "linear-gradient(145deg, #2e1a0a 0%, #402510 50%, #60351a 100%)" },
+    resultB: { type: "系统正义者", rarity: "你属于71%报警的人里，真正会等到警察来的那一批", subtitle: "System Justice", desc: "你相信：一个人的勇敢不如一个系统的力量。你报警不是因为怕，而是因为你知道——冲动的正义可能伤害更多人，包括你自己和被偷的人。你是最理性的正义者。", color: "🎨 人格底色：警蓝 — 理性、秩序、用系统的力量对抗混乱", shareHook: "测测你的正义感人格？没想到我是系统正义者", bg: "linear-gradient(145deg, #0a1a2e 0%, #102540 50%, #1a3555 100%)" }
+  },
+  {
+    id: "d22", text: "恋人要求你删除所有异性好友，才能继续交往。",
+    optionA: "照做", optionB: "拒绝",
+    revealFormats: {
+      A: { stat: "16%", desc: "的人选择了照做", expert: "依恋理论：选择照做的人可能有焦虑型依恋风格——你太害怕失去，愿意用自由换取确定性。这不是软弱，是你对这段关系的重视超越了其他一切。" },
+      B: { stat: "84%", desc: "的人选择了拒绝", expert: "健康关系研究：控制欲不是爱的表现。你选择拒绝不是不爱——而是你知道，以爱之名的控制，最终会毁掉爱本身。" }
+    },
+    resultA: { type: "孤注一掷的爱人", rarity: "你属于人群中仅有16%的「孤注一掷的爱人」", subtitle: "All-In Lover", desc: "你愿意为爱清空一切。也许外人觉得你傻，但你心里的算法很简单：如果这个人是对的，其他都可以重新来过。你是爱情里最纯粹的赌徒。", color: "🎨 人格底色：深玫红 — 炽热、义无反顾、不留退路", shareHook: "测测你的爱情边界？我居然愿意删掉所有异性好友…", bg: "linear-gradient(145deg, #2e0a1a 0%, #401020 50%, #601a30 100%)" },
+    resultB: { type: "自我主权者", rarity: "你属于84%拒绝的人里，第一时间就说不的那一类", subtitle: "Self Sovereign", desc: "你的底线很清楚：爱我可以，控制我不行。你不会为了任何人放弃社交自由——不是因为你不够爱，而是因为你足够爱自己。你是亲密关系里最有安全感的人。", color: "🎨 人格底色：翡翠绿 — 独立、自信、任何人都动摇不了的自我", shareHook: "测测你的爱情边界？没想到我这么硬核", bg: "linear-gradient(145deg, #0a2e1a 0%, #104020 50%, #1a6030 100%)" }
   }
 ];
 
@@ -325,8 +442,16 @@ function track(action, did, extra={}) {
   const e = {t:Date.now(), a:action, d:did, ...extra, ua:navigator.userAgent.slice(0,80)};
   const log = JSON.parse(localStorage.getItem('_events')||'[]');
   log.push(e); localStorage.setItem('_events', JSON.stringify(log));
+  // Beacon to Google Sheets (set up by deploying Apps Script web app)
   if (window._analyticsEndpoint) navigator.sendBeacon(window._analyticsEndpoint, JSON.stringify(e));
+  // Fallback: pixel ping for basic counting
+  try { new Image().src = 'https://ykzhujiang.github.io/dilemma-test/ping.gif?a='+action+'&d='+did+'&t='+Date.now(); } catch(ex){}
 }
+
+// Session ID for analytics continuity
+(function(){
+  if(!sessionStorage.getItem('_sid')) sessionStorage.setItem('_sid', Math.random().toString(36).slice(2));
+})();
 
 init();
 </script>
