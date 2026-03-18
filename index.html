@@ -343,9 +343,10 @@ function toast(msg) {
 
 // Analytics
 const _sid = localStorage.getItem('_sid') || (localStorage.setItem('_sid', Math.random().toString(36).slice(2)+Date.now().toString(36)), localStorage.getItem('_sid'));
+const _utm = (function(){const p=new URLSearchParams(location.search);const u={src:p.get('utm_source')||'',med:p.get('utm_medium')||'',camp:p.get('utm_campaign')||'',ref:p.get('ref')||''};if(u.src||u.ref)localStorage.setItem('_utm',JSON.stringify(u));return JSON.parse(localStorage.getItem('_utm')||'{}');})();
 
 function track(action, did, extra={}) {
-  const e = {t:Date.now(), a:action, d:did, ...extra, ua:navigator.userAgent.slice(0,80), sid:_sid, ref:document.referrer.slice(0,120)};
+  const e = {t:Date.now(), a:action, d:did, ...extra, ua:navigator.userAgent.slice(0,80), sid:_sid, ref:document.referrer.slice(0,120), utm:_utm};
   const log = JSON.parse(localStorage.getItem('_events')||'[]');
   log.push(e); localStorage.setItem('_events', JSON.stringify(log));
   if (window._analyticsEndpoint) {
